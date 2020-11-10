@@ -1,4 +1,4 @@
-package com.example.springboot.docker.mysql.model;
+package com.example.springboot.docker.model;
 
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.example.springboot.docker.mysql.model;
+package com.example.springboot.docker.model;
 
 import javax.persistence.*;
 
@@ -8,18 +8,18 @@ public class Backup {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-	
-	@Column (name = "folderName")
+    private long id;
     private String folderName;
-	
-	 @Column (name = "time")
     private String time;
+    
+    public Backup() {
+		
+	}
 
-//    public Backup(String folderName, String time) {
-//		this.folderName = folderName;
-//		this.time = time;
-//	}
+    public Backup(String folderName, String time) {
+		this.folderName = folderName;
+		this.time = time;
+	}
 
 	public String getTime() {
         return time;
@@ -29,11 +29,11 @@ public class Backup {
         this.time = time;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

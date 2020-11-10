@@ -1,9 +1,9 @@
-package com.example.springboot.docker.mysql.repository;
+package com.example.springboot.docker.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.springboot.docker.mysql.model.Backup;
+import com.example.springboot.docker.model.Backup;
 
 //This is a repository that holds backup records
 
