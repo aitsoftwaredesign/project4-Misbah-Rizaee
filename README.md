@@ -1,1 +1,7 @@
-This is the file in which we will document our project.
+# Introduction
+This repository contains My final Year Project for BSc Hons Softtware Design
+
+# Project Name
+AutoBackup
+
+
