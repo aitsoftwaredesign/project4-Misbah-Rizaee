@@ -1,12 +1,12 @@
 version: '3'
 
 services:
-  mysql-standalone:
-    image: mysql:5.7
-    environment:
-      - MYSQL_ROOT_PASSWORD=admin
-      - MYSQL_DATABASE=projectDatabase
-      - MYSQL_PASSWORD=admin
+#  mysql-standalone:
+#    image: mysql:5.7
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=admin
+#      - MYSQL_DATABASE=projectDatabase
+#      - MYSQL_PASSWORD=admin
   springboot-docker-container:
     image: springboot-image:springboot-image-v1.1
     ports:
@@ -14,6 +14,6 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    depends_on:
-      - mysql-standalone
+#    depends_on:
+#      - mysql-standalone
     restart: always

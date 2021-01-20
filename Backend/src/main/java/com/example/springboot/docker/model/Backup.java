@@ -11,14 +11,18 @@ public class Backup {
     private long id;
     private String folderName;
     private String time;
+    private String storage;
+    private String status;
     
     public Backup() {
 		
 	}
 
-    public Backup(String folderName, String time) {
+    public Backup(String folderName, String time, String storage, String status) {
 		this.folderName = folderName;
 		this.time = time;
+		this.storage = storage;
+		this.status = status;
 	}
 
 	public String getTime() {
@@ -44,5 +48,21 @@ public class Backup {
     public void setFolderName(String folderName) {
         this.folderName = folderName;
     }
+
+	public String getStorage() {
+		return storage;
+	}
+
+	public void setStorage(String storage) {
+		this.storage = storage;
+	}
+	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 }
 

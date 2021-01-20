@@ -1,49 +1,106 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+	<head>
+	    <meta charset="utf-8">
+	    <meta http-equiv="x-ua-compatible" content="ie=edge">
+	    
+	    <title>Add User</title>
+	    
+		<link rel="stylesheet" href="static/styles.css"/>
+		<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<style> 
+			form {
+				margin: auto;
+				width: 90%;
+				padding: 10px;
+			}
+			#time, #storageType {
+				background-color: white;
+				border: none;
+				color: black;
+				padding: 15px 32px;
+				text-decoration: none;
+				margin: 4px 2px;
+				cursor: pointer;
+			}
+		</style>
+	</head>
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Add User</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
-    <!-- <link rel="stylesheet" href="../css/shards.min.css"> -->
-</head>
+	<body>
+		<div class="header" id="ScheduleBackup">
+			<div class="container1">
+				<div class="container1-card" style="width: 100%;">
+					<div class="container1-card-left">
+						<p>Schedule Backup</p>
+						<i class='fa fa-clock-o' style="font-size:35px"></i>
+					</div>
+					<div class="container1-card-right">
+						<form action="/add" method="post" enctype="multipart/form-data">
+							<div>	
+								<label for="browse">Browse</label><br>
+								<div>
+									<input type="file" onclick="FileUpload();" name="file" id="folderName" required="required"/><br><br>
+								</div>
+							</div>
+							
+							<div>
+								<label for="time">Date</label><br>
+								<input type="datetime-local" id="time" name="time" required="required" onclick="updateTime();"><br><br>
+							</div>
+							
+							<div>
+								<label for="cars">Select Storage Type</label><br>
+								<div>
+									<select id="storageType" name="storageType" required="required">
+										<option value="">Select</option>
+										<option value="Local">Local Storage</option>
+										<option value="OneDrive" disabled>OneDrive Storage</option>
+										<option value="Google" disabled>Google Drive Storage</option>
+									</select><br><br>
+								</div>
+							</div>
+							
+                            <input type="submit" class="container1-button" value="Add Backup">
+                            <input type="button" class="container1-button" onclick="history.back();" value="Back">
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			function FileUpload()
+			{
+				var path = document.getElementById("folderName").files;
+				console.log(path);	
+			}
+			
+			function updateTime()
+			{
+				var dtToday = new Date();
+				var month = dtToday.getMonth() + 1;
+				var day = dtToday.getDate();
+				var year = dtToday.getFullYear();
+				if(month < 10)
+					month = '0' + month.toString();
+				if(day < 10)
+					day = '0' + day.toString();
+				
+				var hour = dtToday.getHours();
+				var minute = dtToday.getMinutes();
+				if(hour < 10)
+					hour = '0' + hour.toString();
+				if(minute < 10)
+					minute = '0' + minute.toString();
+				
+				var maxDate = year + '-' + month + '-' + day + 'T' + hour + ':' + minute;
+				$('#time').attr('min', maxDate);	
+			}
+			
 
-<body>
-    <div class="container my-5">
-        <h3> Add Backup</h3>
-        <div class="card">
-            <div class="card-body">
-                <div class="col-md-10">
-                    <form action="#" th:action="@{add}" th:object="${backup}" method="post">
-                        <div class="row">
-                            <div class="form-group col-md-8">
-                                <label for="folderName" class="col-form-label">Folder Name</label> 
-                                <input type="text" th:field="*{folderName}" class="form-control" id="folderName" placeholder="Folder Name"> 
-                                <span th:if="${#fields.hasErrors('folderName')}" th:errors="folderName" class="text-danger"></span>
-                            </div>
-
-                            <div class="form-group col-md-8">
-                                <label for="time" class="col-form-label">Phone No</label> 
-                                <input type="text" th:field="*{time}" class="form-control" id="time" placeholder="Time"> 
-                                <span th:if="${#fields.hasErrors('time')}" th:errors="time" class="text-danger"></span>
-                            </div>
-
-                            <div class="col-md-6">
-                                <input type="submit" class="btn btn-primary" value="Add Backup">
-                                <a href="list" type="button" class="btn btn-primary" >Cancel</a>
-                            </div>
-
-                            <div class="form-group col-md-8"></div>
-
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
+		</script>
+	</body>
 
 </html>
