@@ -14,6 +14,8 @@ import com.example.springboot.docker.repository.BackupRepository;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,15 +46,13 @@ public class BackupController {
 	
 	@PostMapping("/add")
 	public String addBackup(@RequestParam("file") MultipartFile file,
-    		@RequestParam("time") String time,
-    		@RequestParam("storageType") String storageType) throws ParseException {
+    		@RequestParam("time") String time) throws ParseException {
 		
 		Backup backup = new Backup();
 		
 		String fileName = file.getOriginalFilename();
 		backup.setFolderName(fileName);
 		backup.setTime(time);
-		backup.setStorage(storageType);
 		backup.setStatus("IN PROGRESS");
 		
 		backupRepository.save(backup);
@@ -82,33 +82,34 @@ public class BackupController {
 					updateBackup.setStatus("DONE"); 
 					backupRepository.save(updateBackup);
 					
-					String fileName = file.getOriginalFilename();
-			    	
-			    	File folder = new File("C:\\AutoBackup");
-			    	if(!folder.exists()) {
-			    		if(folder.mkdir()) {
-			    			System.out.println("Directory is created.");
-			    		} else {
-			    			System.out.println("Failed to create directory.");
-			    		}
+					String folderName = "ID"+id+"-"+time.toString().replace(":", "-");
+					String path = System.getProperty("user.home")+ File.separator +"AutoBackup"+ File.separator +"Backups"+ File.separator +folderName;
+					File folder = new File(path);
+
+					if(!folder.exists()) {
+						try {
+							System.out.println("Creating the directory ("+path+")");
+							Files.createDirectories(Paths.get(path));
+						} catch (IOException e1) {
+							System.out.println("Failed to create directory.");
+						}
 			    	} else {
-		    			System.out.println("Directory already exists.");
+		    			System.out.println("Directory already exists at ("+path+")");
 		    		}
 					
+					String fileName = file.getOriginalFilename();
 					try {
-						file.transferTo(new File("C:\\AutoBackup\\"+fileName));
+						file.transferTo(new File(path+ File.separator +fileName));
 					} catch (IllegalStateException e) {
 						e.printStackTrace();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					System.out.println("File uploaded successfully");
 			    	
-			        System.out.println("The file \""+ folderName +"\" has been backed up at \""+time);
+			        System.out.println("The file \""+ fileName +"\" has been backed up at \""+time);
 					
 		        } catch (NoSuchElementException e) {
-		            // Output expected NoSuchElementExceptions.
-		        	System.out.println("Scheduled backup process with ID "+id+" was terminated. File ("+folderName+") has not been backed up.");
+		        	System.out.println("Scheduled backup with ID "+id+" was deleted. File ("+folderName+") has not been backed up.");
 		        } 
 		    }
 		};

@@ -11,6 +11,9 @@ services:
     image: springboot-image:springboot-image-v1.1
     ports:
       - 8081:8080
+    privileged: true
+    volumes:
+      - /mnt/c/Users/ProBook/AutoBackup:/root/AutoBackup
     build:
       context: ./
       dockerfile: Dockerfile
