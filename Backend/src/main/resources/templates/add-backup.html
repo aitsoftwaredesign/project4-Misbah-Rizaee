@@ -1,71 +1,64 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="utf-8">
-<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<head>
+	    <meta charset="utf-8">
+	    <meta http-equiv="x-ua-compatible" content="ie=edge">
+	    
+	    <title>Add User</title>
+	    
+		<link rel="stylesheet" href="static/styles.css"/>
+		<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<style> 
+			form {
+				margin: auto;
+				width: 90%;
+				padding: 10px;
+			}
+			#time, #storageType {
+				background-color: white;
+				border: none;
+				color: black;
+				padding: 15px 32px;
+				text-decoration: none;
+				margin: 4px 2px;
+				cursor: pointer;
+			}
+		</style>
+	</head>
 
-<title>Add User</title>
-
-<link rel="stylesheet" href="static/styles.css" />
-<script src='https://kit.fontawesome.com/a076d05399.js'></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<style>
-form {
-	margin: auto;
-	width: 90%;
-	padding: 10px;
-}
-
-#time, #storageType {
-	background-color: white;
-	border: none;
-	color: black;
-	padding: 15px 32px;
-	text-decoration: none;
-	margin: 4px 2px;
-	cursor: pointer;
-}
-</style>
-</head>
-
-<body>
-	<div class="header" id="ScheduleBackup">
-		<div class="container1">
-			<div class="container1-card" style="width: 100%;">
-				<div class="container1-card-left">
-					<p>Schedule Backup</p>
-					<i class='fa fa-clock-o' style="font-size: 35px"></i>
-				</div>
-				<div class="container1-card-right">
-					<form action="/add" method="post" enctype="multipart/form-data">
-						<div>
-							<label for="browse">Browse</label><br>
-							<div>
-								<input type="file" onclick="FileUpload();" name="file"
-									id="folderName" required="required" /><br>
-								<br>
+	<body>
+		<div class="header" id="ScheduleBackup">
+			<div class="container1">
+				<div class="container1-card" style="width: 100%;">
+					<div class="container1-card-left">
+						<p>Schedule Backup</p>
+						<i class='fa fa-clock-o' style="font-size:35px"></i>
+					</div>
+					<div class="container1-card-right">
+						<form action="/add" method="post" enctype="multipart/form-data">
+							<div>	
+								<label for="browse">Browse</label><br>
+								<div>
+									<input type="file" onclick="FileUpload();" name="file" id="folderName" required="required"/><br><br>
+								</div>
 							</div>
-						</div>
-
-						<div>
-							<label for="time">Date</label><br> <input
-								type="datetime-local" id="time" name="time" required="required"
-								onclick="updateTime();"><br>
-							<br>
-						</div>
-
-						<input type="submit" class="container1-button" value="Add Backup">
-						<input type="button" class="container1-button"
-							onclick="history.back();" value="Back">
-					</form>
+							
+							<div>
+								<label for="time">Date</label><br>
+								<input type="datetime-local" id="time" name="time" required="required" onclick="updateTime();"><br><br>
+							</div>
+							
+                            <input type="submit" class="container1-button" value="Add Backup">
+                            <input type="button" class="container1-button" onclick="history.back();" value="Back">
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<script>
+		<script>
 			function FileUpload()
 			{
 				var path = document.getElementById("folderName").files;
@@ -96,6 +89,6 @@ form {
 			
 
 		</script>
-</body>
+	</body>
 
 </html>

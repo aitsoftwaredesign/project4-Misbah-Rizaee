@@ -1,167 +1,146 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
+	<head>
+		<meta charset="UTF-8">	
+		
+		<title>AutoBackup Application</title>
+		
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
 
-<title>AutoBackup Application</title>
-
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-<!-- Optional theme -->
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
-
-<link rel="stylesheet" href="static/styles.css" />
-<script src="static/script.js"></script>
-<script src='https://kit.fontawesome.com/a076d05399.js'></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-
-<body>
-	<div class="header" id="ScheduleBackup">
-		<div class="topnav" id="myTopnav">
-			<a href="#" class="fa fa-home"></a> <a href="#ScheduleBackup">Schedule
-				Backup</a> <a href="#BackupHistory">Backup History</a> <a
-				href="#AboutApplication">About Application</a> <a href="#contact">Contact
-				Me</a> <a class="icon" onclick="openNav()"><i class='fa fa-bars'></i></a>
-		</div>
-
-		<div id="mySidenav" class="sidenav">
-			<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-			<a href="#ScheduleBackup" onclick="closeNav()">Schedule Backup</a> <a
-				href="#BackupHistory" onclick="closeNav()">Backup History</a> <a
-				href="#AboutApplication" onclick="closeNav()">About Application</a>
-			<a href="#contact" onclick="closeNav()">Contact Me</a>
-		</div>
-
-		<div class="container1">
-			<div class="container1-card">
-				<div class="container1-card-left">
-					<p>Schedule Backup</p>
-					<i class='fa fa-clock-o' style="font-size: 35px"></i>
-				</div>
-				<div class="container1-card-right">
-					<h3>Help</h3>
-					<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
-						sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna
-						aliquam erat volutpat.</p>
-					<a href="showForm"><button class="container1-button">Schedule
-							Backup &raquo;</button></a>
-				</div>
+		<link rel="stylesheet" href="static/styles.css"/>
+		<script src="static/script.js"></script>
+		<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+	
+	<body>
+		<div class="header" id="ScheduleBackup">
+			<div class="topnav" id="myTopnav">
+			  <a href="#" class="fa fa-home"></a>
+			  <a href="#ScheduleBackup">Schedule Backup</a>
+			  <a href="#BackupHistory">Backup History</a>
+			  <a href="#AboutApplication">About Application</a>
+			  <a href="#contact">Contact Me</a>
+			  <a class="icon" onclick="openNav()"><i class='fa fa-bars'></i></a>
 			</div>
-		</div>
-	</div>
-
-	<div class="middle">
-		<div class="container2" id="BackupHistory">
-			<h1>Backup History</h1>
-			<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed
-				diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam
-				erat volutpat.</p>
-			<div id="myTable"
-				style="overflow-x: auto; padding-bottom: 50px; padding-top: 50px;">
-				<table>
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Folder Name</th>
-							<th>Time</th>
-							<th>Status</th>
-							<th>Delete</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr th:each="backup : ${backups}">
-							<td th:text="${backup.id}"></td>
-							<td th:text="${backup.folderName}"></td>
-							<td th:text="${backup.time}"></td>
-							<td th:text="${backup.status}"></td>
-							<td><a th:href="@{/delete/{id}(id=${backup.id})}"><button
-										class="container2-button">
-										<i style='font-size: 24px' class='fas'>&#xf410;</i>
-									</button></a></td>
-						</tr>
-					</tbody>
-				</table>
+			
+			<div id="mySidenav" class="sidenav">
+			  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+			  <a href="#ScheduleBackup" onclick="closeNav()">Schedule Backup</a>
+			  <a href="#BackupHistory" onclick="closeNav()">Backup History</a>
+			  <a href="#AboutApplication" onclick="closeNav()">About Application</a>
+			  <a href="#contact" onclick="closeNav()">Contact Me</a>
 			</div>
-		</div>
 
-		<div class="container2" id="Graph">
-			<h1>Graph</h1>
-			<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed
-				diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam
-				erat volutpat.</p>
-			<div id="myChart" style="height: 400px"></div>
-		</div>
-
-		<div class="container4" id="AboutApplication">
-			<div class="container4-column" style="background-color: #def2f1;">
-				<div class="container4-column-content" id="left">
-					<i style='font-size: 80px' class='fas'>&#xf0a0;</i>
-				</div>
-			</div>
-			<div class="container4-column" style="background-color: #def2f1;">
-				<div class="container4-column-content" id="right">
-					<h3>About AutoBackup</h3>
-					<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
-						sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna
-						aliquam erat volutpat.</p>
-				</div>
-			</div>
-		</div>
-
-		<div class='container3'>
-			<div class='inner-container3'>
-				<h1>About AutoBackup</h1>
-				<div class='container3-content'>
-					<div class='container3-card'>
-						<div class='container3-icon'>
-							<i class='fa fa-database'></i>
-						</div>
-						<h3>Feature 1</h3>
-						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
-							sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna
-							aliquam erat volutpat.</p>
+			<div class="container1">
+				<div class="container1-card">
+					<div class="container1-card-left">
+						<p>Schedule Backup</p>
+						<i class='fa fa-clock-o' style="font-size:35px"></i>
 					</div>
-
-					<div class='container3-card'>
-						<div class='container3-icon'>
-							<i class='fa fa-code'></i>
-						</div>
-						<h3>Feature 2</h3>
-						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
-							sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna
-							aliquam erat volutpat.</p>
-					</div>
-
-					<div class='container3-card'>
-						<div class='container3-icon'>
-							<i class='fa fa-bug'></i>
-						</div>
-						<h3>Feature 3</h3>
-						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
-							sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna
-							aliquam erat volutpat.</p>
+					<div class="container1-card-right">
+						<h3>Help</h3>
+						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+						<a href="showForm"><button class="container1-button">Schedule Backup &raquo;</button></a>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	
+		<div class="middle">	
+			<div class="container2" id="BackupHistory">
+				<h1>Backup History</h1>
+				<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+				<div id="myTable" style="overflow-x:auto; padding-bottom: 50px; padding-top: 50px;">
+					<table>
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Folder Name</th>
+								<th>Time</th>
+								<th>Status</th>
+								<th>Delete</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="backup : ${backups}">
+								<td th:text="${backup.id}"></td>
+								<td th:text="${backup.folderName}"></td>
+								<td th:text="${backup.time}"></td>
+								<td th:text="${backup.status}"></td>
+								<td><a th:href="@{/delete/{id}(id=${backup.id})}"><button class="container2-button"><i style='font-size:24px' class='fas'>&#xf410;</i></button></a></td>
+							</tr>
+						</tbody>
+					</table>
+				  </div>
+			</div>
+			
+			<div class="container2" id="Graph">
+				<h1>Graph</h1>
+				<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+				<div id="myChart" style="height: 400px"></div>
+			</div>
 
-	<div class="footer" id="contact">
-		<h2>Thanks For Using AutoBackup Application</h2>
-		<i style='font-size: 50px; padding-bottom: 50px; padding-top: 20px;'
-			class='fas'>&#xf121;</i>
-	</div>
+			<div class="container4"  id="AboutApplication">
+				<div class="container4-column" style="background-color: #def2f1;">
+					<div class="container4-column-content" id="left">
+						<i style='font-size:80px' class='fas'>&#xf0a0;</i>
+					</div>
+				</div>
+				<div class="container4-column" style="background-color: #def2f1;">
+					<div class="container4-column-content" id="right">
+						<h3>About AutoBackup</h3>
+						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+					</div>
+				</div>
+			</div>
 
-	<script src="https://code.highcharts.com/highcharts.js"></script>
-	<script src="https://code.highcharts.com/highcharts-3d.js"></script>
-	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+			<div class='container3'>
+				<div class='inner-container3'>
+					<h1>About AutoBackup</h1>
+					<div class='container3-content'>
+						<div class='container3-card'>
+							<div class='container3-icon'>
+								<i class='fa fa-database'></i>
+							</div>
+							<h3>Feature 1</h3>
+							<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+						</div>
 
-	<script th:inline="javascript">
+						<div class='container3-card'>
+							<div class='container3-icon'>
+								<i class='fa fa-code'></i>
+							</div>
+							<h3>Feature 2</h3>
+							<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+						</div>
+
+						<div class='container3-card'>
+							<div class='container3-icon'>
+								<i class='fa fa-bug'></i>
+							</div>
+							<h3>Feature 3</h3>
+							<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="footer" id="contact">	
+			<h2>Thanks For Using AutoBackup Application</h2>
+			<i style='font-size:50px; padding-bottom: 50px; padding-top: 20px;' class='fas'>&#xf121;</i>
+		</div>
+		
+		<script src="https://code.highcharts.com/highcharts.js"></script>
+		<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+		<script src="https://code.highcharts.com/modules/exporting.js"></script>	
+		
+		<script th:inline="javascript">
 		
 			var chartDiv = document.getElementById("myChart");
 			if([[${InProgress}]] === null && [[${Done}]] === null || [[${InProgress}]] === 0 && [[${Done}]] === 0) { //or empty or whataver
@@ -211,5 +190,5 @@
 				} ]
 			});
 		</script>
-</body>
+	</body> 
 </html>
