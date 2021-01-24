@@ -14,4 +14,3 @@ import com.example.springboot.docker.model.Backup;
 public interface BackupRepository extends JpaRepository<Backup, Long> {
 
 }
-
