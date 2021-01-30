@@ -15,6 +15,10 @@
 		<script src='https://kit.fontawesome.com/a076d05399.js'></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<style> 
+
+		</style>
 	</head>
 	
 	<body>
@@ -43,8 +47,8 @@
 						<i class='fa fa-clock-o' style="font-size:35px"></i>
 					</div>
 					<div class="container1-card-right">
-						<h3>Help</h3>
-						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+						<h3>Schedule Backup</h3>
+						<p>Using this feature you can schedule backups to store files and later you can keep track of the changes made to these files at any time.</p>
 						<a href="showForm"><button class="container1-button">Schedule Backup &raquo;</button></a>
 					</div>
 				</div>
@@ -83,6 +87,28 @@
 				<h1>Graph</h1>
 				<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
 				<div id="myChart" style="height: 400px"></div>
+			</div>
+			
+			<div class="container2">
+				<h1>Track your backups</h1>
+				<p>This feature allows you to see how your newly modified file compares to the one you have already backed up</p>
+				
+				<form action="/compareForm" method="post" id="comparison" enctype="multipart/form-data">
+					<label for="backups">Select a completed backup: </label>
+					<select id="selectBackup" name="selectBackup" required="required">
+					    <option th:each="doneBackup : ${doneBackupList}" th:value="${doneBackup}" th:text="${doneBackup}">
+					    </option>
+					</select>
+				
+					<div>	
+						<label class="container2-button">
+							<i class="fa fa-file"></i> Select a file to compare<input type="file" name="file" id="folderName" style="display: none;" required="required">
+						</label></br>
+						<label id="file-name"></label>
+					</div>
+					
+                    <input type="submit" class="container2-button" value="Compare">
+				</form>
 			</div>
 
 			<div class="container4"  id="AboutApplication">
@@ -142,6 +168,10 @@
 		
 		<script th:inline="javascript">
 		
+			document.querySelector("#folderName").onchange = function(){
+			  document.querySelector("#file-name").textContent = this.files[0].name;
+			}
+		
 			var chartDiv = document.getElementById("myChart");
 			if([[${InProgress}]] === null && [[${Done}]] === null || [[${InProgress}]] === 0 && [[${Done}]] === 0) { //or empty or whataver
 				chartDiv.style.display = 'none';
@@ -154,6 +184,13 @@
 				tableDiv.style.display = 'none';
 			} else {
 				tableDiv.style.display = 'block';
+			}
+			
+			var comparisonDiv = document.getElementById("comparison");
+			if([[${doneBackupList}]] === null || [[${doneBackupList}]].length === 0) { //or empty or whataver
+				comparisonDiv.style.display = 'none';
+			} else {
+				comparisonDiv.style.display = 'block';
 			}
 			
 			Highcharts.chart('myChart', {

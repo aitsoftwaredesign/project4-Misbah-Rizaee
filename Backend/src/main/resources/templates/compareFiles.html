@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+    <title>Compare Files</title>
+    
+	<link rel="stylesheet" href="static/styles.css"/>
+	<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<style>
+		body {
+			font-family: Arial;
+			color: black;
+		}
+		
+		.block {
+		  display: block;
+		  width: 100%;
+		  border: none;
+		  background-color: black;
+		  color: white;
+		  padding: 14px 28px;
+		  font-size: 16px;
+		  cursor: pointer;
+		  text-align: center;
+		}
+		
+		.block:hover {
+		  background-color: #ddd;
+		  color: black;
+		}
+		 
+		.divideScreen {
+			height: 100%;
+			width: 50%;
+			position: fixed;
+		}
+		
+		.rightWindow {
+			right: 0;
+			border: 1px solid black;
+			background-color: white;
+		}
+		 
+		.leftWindow {
+			left: 0;
+			border: 1px solid black;
+			background-color: white;
+		}
+	</style>
+</head>
+
+<body>
+	<button class="block" onclick="history.back();">Go Back</button>
+	<div class="divideScreen leftWindow">
+		<div class="centered">
+			<h3 id="leftHeading"></h3>
+			<p id="leftparaph"></p>
+		</div>
+	</div>
+ 
+	<div class="divideScreen rightWindow">
+		<div class="centered">
+			<h3 id="rightHeading"></h3>
+			<p id="rightparaph"></p>
+		</div>
+	</div>
+	
+	<script th:inline="javascript">
+		document.getElementById("leftparaph").innerHTML=[[${leftText}]];
+		document.getElementById("leftHeading").innerHTML=[[${leftHeading}]];
+		document.getElementById("rightparaph").innerHTML=[[${rightText}]];
+		document.getElementById("rightHeading").innerHTML=[[${rightHeading}]];
+	</script>
+</body>
+</html>

@@ -9,19 +9,28 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.pdfbox.pdmodel.*;
+import org.apache.pdfbox.text.PDFTextStripper;
+
 import com.example.springboot.docker.model.Backup;
 import com.example.springboot.docker.repository.BackupRepository;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -32,13 +41,21 @@ public class BackupController {
 				// Spring, we will use it to handle the data
 	private BackupRepository backupRepository;
 
+	List<Long> doneBackupList = new ArrayList<Long>();
 	private static int backupsInProgress = 0;
 	private static int backupsDone = 0;
+
+	// Spans with red & green highlights to put highlighted characters in HTML
+	private static final String DELETION = "<span style=\"background-color: #FB504B\">${text}</span>";
+	private static final String INSERTION = "<span style=\"background-color: #45EA85\">${text}</span>";
+	private String left = "";
+	private String right = "";
 
 	@GetMapping("/list")
 	public String backups(Model model) {
 		List<Backup> backups = backupRepository.findAll();
 		model.addAttribute("backups", backups);
+		model.addAttribute("doneBackupList", doneBackupList);
 		model.addAttribute("InProgress", backupsInProgress);
 		model.addAttribute("Done", backupsDone);
 		return "index";
@@ -94,13 +111,13 @@ public class BackupController {
 
 					if (!folder.exists()) {
 						try {
-							System.out.println("Creating the directory (" + path + ")");
+							System.out.println("Creating a directory for backups at (" + path + ")");
 							Files.createDirectories(Paths.get(path));
 						} catch (IOException e1) {
-							System.out.println("Failed to create directory.");
+							System.out.println("Failed to create a directory for backups");
 						}
 					} else {
-						System.out.println("Directory already exists at (" + path + ")");
+						System.out.println("A directory for backups already exists at (" + path + ")");
 					}
 
 					String fileName = file.getOriginalFilename();
@@ -114,6 +131,7 @@ public class BackupController {
 
 					backupsInProgress -= 1;
 					backupsDone += 1;
+					doneBackupList.add(id);
 
 					System.out.println("The file \"" + fileName + "\" has been backed up at \"" + time);
 
@@ -146,5 +164,155 @@ public class BackupController {
 		model.addAttribute("InProgress", backupsInProgress);
 		model.addAttribute("Done", backupsDone);
 		return "redirect:/list";
+	}
+
+	@PostMapping("compareForm")
+	public String comparison(@RequestParam("file") MultipartFile file, @RequestParam("selectBackup") long id,
+			Model model) throws IOException {
+		Backup backedUp = this.backupRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Invalid backup id : " + id));
+
+		String time = backedUp.getTime();
+		String folderName = time.toString().replace(":", "-") + "-" + "ID" + id;
+		String path1 = System.getProperty("user.home") + File.separator + "AutoBackup" + File.separator + "Backups"
+				+ File.separator + folderName + File.separator + backedUp.getFolderName();
+		
+		String tempPath = System.getProperty("user.home") + File.separator + "AutoBackup" + File.separator + "Temp";
+		File tempFolder = new File(tempPath);
+		if (!tempFolder.exists()) {
+			try {
+				System.out.println("Creating a directory for temporary files at (" + tempPath + ")");
+				Files.createDirectories(Paths.get(tempPath));
+			} catch (IOException e1) {
+				System.out.println("Failed to create directory.");
+			}
+		} else {
+			System.out.println("Directory for temporary files already exists at (" + tempPath + ")");
+		}
+
+		File file1 = new File(path1);
+
+		if (!file1.exists()) {
+			System.out.println("Backup was DONE but file doesnt exist!!!!");
+		} else {
+
+			// LEFT SIDE TEXT
+			String filename1 = backedUp.getFolderName();
+			String extension1 = filename1.substring(filename1.lastIndexOf(".") + 1, filename1.length());
+			StringBuilder leftTextBeforeHighlight = printHTML(extension1, file1, path1);
+			String leftHeading = "Backed up file: " + filename1;
+			model.addAttribute("leftHeading", leftHeading);
+
+			// RIGHT SIDE TEXT
+			File convFile = new File(tempPath, file.getOriginalFilename());
+			FileOutputStream fos = new FileOutputStream(convFile);
+			fos.write(file.getBytes());
+			fos.close();
+
+			String filename2 = file.getOriginalFilename();
+			String extension2 = filename2.substring(filename2.lastIndexOf(".") + 1, filename2.length());
+			StringBuilder rightTextBeforeHighlight = printHTML(extension2, convFile, path1);
+			String rightHeading = "Modified file: " + filename2;
+			model.addAttribute("rightHeading", rightHeading);
+
+			left = "";
+			right = "";
+			String leftTextAfterHighlight = deleteHighlight(leftTextBeforeHighlight, rightTextBeforeHighlight);
+			String rightTextAfterHighlight = insertHighlight(rightTextBeforeHighlight, leftTextBeforeHighlight);
+			model.addAttribute("leftText", leftTextAfterHighlight);
+			model.addAttribute("rightText", rightTextAfterHighlight);
+
+			convFile.delete();
+			return "compareFiles";
+		}
+		return "redirect:/list";
+	}
+
+	public StringBuilder printHTML(String extension, File file, String path) throws IOException {
+		if (extension.equals("txt")) {
+			Scanner myReader = new Scanner(file);
+			StringBuilder text = new StringBuilder();
+			while (myReader.hasNextLine()) {
+				text.append(myReader.nextLine() + " <br>");
+			}
+			myReader.close();
+
+			return text;
+		} 
+		else if (extension.equals("pdf")) {
+			PDDocument pdDocument = PDDocument.load(file);
+			PDFTextStripper pdfStripper = new PDFTextStripper();
+			String leftText = pdfStripper.getText(pdDocument);
+
+			StringBuilder text = new StringBuilder();
+			Scanner scan = new Scanner(leftText);
+			while (scan.hasNextLine()) {
+				text.append(scan.nextLine() + " <br>");
+			}
+			scan.close();
+
+			return text;
+		} 
+		else if (extension.equals("docx")) {
+			FileInputStream fis = new FileInputStream(file);
+			XWPFDocument docx = new XWPFDocument(fis);
+			List<XWPFParagraph> paragraphList = docx.getParagraphs();
+
+			StringBuilder text = new StringBuilder();
+			for (XWPFParagraph paragraph : paragraphList) {
+				text.append(paragraph.getText() + " <br>");
+			}
+
+			return text;
+		}
+		return null;
+	}
+
+	public String deleteHighlight(StringBuilder leftTextBeforeHighlight, StringBuilder rightTextBeforeHighlight) {
+
+		String s1 = leftTextBeforeHighlight.toString();
+		String s2 = rightTextBeforeHighlight.toString();
+
+		String s1_words[] = s1.split("\\s");
+		String s2_words[] = s2.split("\\s");
+
+		int num_words = s1_words.length;
+
+		for (int i = 0; i < num_words; i++) {
+			if (i > s2_words.length - 1) {
+				left = left + DELETION.replace("${text}", "" + s1_words[i]) + " ";
+			} else {
+				if (s1_words[i].equalsIgnoreCase(s2_words[i])) {
+					left = left + s1_words[i] + " ";
+				} else if (s1_words[i] != s2_words[i]) {
+					left = left + DELETION.replace("${text}", "" + s1_words[i]) + " ";
+				}
+			}
+		}
+		return left;
+	}
+
+	public String insertHighlight(StringBuilder rightTextBeforeHighlight, StringBuilder leftTextBeforeHighlight) {
+
+		String s1 = rightTextBeforeHighlight.toString();
+		String s2 = leftTextBeforeHighlight.toString();
+
+		String s1_words[] = s1.split("\\s");
+		String s2_words[] = s2.split("\\s");
+
+		int num_words = s1_words.length;
+
+		for (int i = 0; i < num_words; i++) {
+			if (i > s2_words.length - 1) {
+				right = right + INSERTION.replace("${text}", "" + s1_words[i]) + " ";
+			} else {
+				if (s1_words[i].equalsIgnoreCase(s2_words[i])) {
+					right = right + s1_words[i] + " ";
+				} else if (s1_words[i] != s2_words[i]) {
+					right = right + INSERTION.replace("${text}", "" + s1_words[i]) + " ";
+				}
+			}
+		}
+		return right;
 	}
 }
