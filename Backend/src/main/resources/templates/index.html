@@ -58,7 +58,7 @@
 		<div class="middle">	
 			<div class="container2" id="BackupHistory">
 				<h1>Backup History</h1>
-				<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+				<p>The table below provides a clear summary record of backups.</p>
 				<div id="myTable" style="overflow-x:auto; padding-bottom: 50px; padding-top: 50px;">
 					<table>
 						<thead>
@@ -85,13 +85,29 @@
 			
 			<div class="container2" id="Graph">
 				<h1>Graph</h1>
-				<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+				<p>The graph gives information about the status of backups. It shows how many backups are in progress or done.</p>
 				<div id="myChart" style="height: 400px"></div>
+			</div>
+			
+			<div class="container4"  id="AboutApplication">
+				<div class="container4-column" style="background-color: #def2f1;">
+					<div class="container4-column-content" id="left">
+						<i style='font-size:80px' class='fas'>&#xf0a0;</i>
+					</div>
+				</div>
+				<div class="container4-column" style="background-color: #def2f1;">
+					<div class="container4-column-content" id="right">
+						<h3>About AutoBackup</h3>
+						<p>AutoBackup application allows scheduling backup for any file and data type. The Backed up files are stored in a  folder in the user's home directory, limited to 20MB per backup. Users can see a list of files that have been backed up or scheduled for backup in a table and they can easily manage them. This application also provides a useful feature which enables users to keep track of the changes made to the files and make comparison between the files that are already backed up and newer version of those files.</p><br>
+						<p>NOTE: Location for storing backups on window: <br> C:\users\%username%\AutoBackup\Backups</p> <br>
+						<p>NOTE: Location for storing backups on Linux: <br> /root/AutoBackup/Backups</p>
+					</div>
+				</div>
 			</div>
 			
 			<div class="container2">
 				<h1>Track your backups</h1>
-				<p>This feature allows you to see how your newly modified file compares to the one you have already backed up</p>
+				<p>This feature allows you to see how your newly modified file compares to the one you have already backed up. <br> Supported file types include (.docx , .pdf , .txt , .java , .py)</p>
 				
 				<form action="/compareForm" method="post" id="comparison" enctype="multipart/form-data">
 					<label for="backups">Select a completed backup: </label>
@@ -102,8 +118,8 @@
 				
 					<div>	
 						<label class="container2-button">
-							<i class="fa fa-file"></i> Select a file to compare<input type="file" name="file" id="folderName" style="display: none;" required="required">
-						</label></br>
+							<i class="fa fa-file"></i> Select a file to compare<input type="file" name="file" id="folderName" accept=".pdf, .docx, .txt, .java, .py" style="display: none;" required="required">
+						</label><br>
 						<label id="file-name"></label>
 					</div>
 					
@@ -111,46 +127,32 @@
 				</form>
 			</div>
 
-			<div class="container4"  id="AboutApplication">
-				<div class="container4-column" style="background-color: #def2f1;">
-					<div class="container4-column-content" id="left">
-						<i style='font-size:80px' class='fas'>&#xf0a0;</i>
-					</div>
-				</div>
-				<div class="container4-column" style="background-color: #def2f1;">
-					<div class="container4-column-content" id="right">
-						<h3>About AutoBackup</h3>
-						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
-					</div>
-				</div>
-			</div>
-
 			<div class='container3'>
 				<div class='inner-container3'>
-					<h1>About AutoBackup</h1>
+					<h1>Features</h1>
 					<div class='container3-content'>
 						<div class='container3-card'>
 							<div class='container3-icon'>
-								<i class='fa fa-database'></i>
+								<i class='fas'>&#xf0a0;</i>
 							</div>
-							<h3>Feature 1</h3>
-							<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+							<h3>Schedule Backup</h3>
+							<p>Using AutoBackup application, you can take advantage of creating backup copy of your important files, then the backup job should run at the scheduled time and perform a full backup.</p>
 						</div>
 
 						<div class='container3-card'>
 							<div class='container3-icon'>
-								<i class='fa fa-code'></i>
+								<i class='fa fa-pie-chart'></i>
 							</div>
-							<h3>Feature 2</h3>
-							<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+							<h3>Graph</h3>
+							<p>The data in the table is presented in a summarised form that helps you to understand the backups as well as to manage them easily. A graph is also used to present the data in a form that is easy for you to understand.</p>
 						</div>
 
 						<div class='container3-card'>
 							<div class='container3-icon'>
-								<i class='fa fa-bug'></i>
+								<i class='fa fa-file-text'></i>
 							</div>
-							<h3>Feature 3</h3>
-							<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+							<h3>Track Changes</h3>
+							<p>This feature can be used as a quick way to see if there is any difference between two files by comparing them side by side. the differences are highlighted in red and green colours.</p>
 						</div>
 					</div>
 				</div>
@@ -159,7 +161,7 @@
 		
 		<div class="footer" id="contact">	
 			<h2>Thanks For Using AutoBackup Application</h2>
-			<i style='font-size:50px; padding-bottom: 50px; padding-top: 20px;' class='fas'>&#xf121;</i>
+			<i style='font-size:50px; padding-bottom: 50px; padding-top: 20px;' class='	fa fa-thumbs-up'></i>
 		</div>
 		
 		<script src="https://code.highcharts.com/highcharts.js"></script>

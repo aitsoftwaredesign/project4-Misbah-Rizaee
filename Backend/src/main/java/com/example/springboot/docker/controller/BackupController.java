@@ -131,7 +131,12 @@ public class BackupController {
 
 					backupsInProgress -= 1;
 					backupsDone += 1;
-					doneBackupList.add(id);
+					
+					String checkExtension = updateBackup.getFolderName();
+					String theExtension = checkExtension.substring(checkExtension.lastIndexOf(".") + 1, checkExtension.length());
+					if (theExtension.equals("pdf") || theExtension.equals("txt") || theExtension.equals("java") || theExtension.equals("py") || theExtension.equals("docx")) {
+						doneBackupList.add(id);
+					}
 
 					System.out.println("The file \"" + fileName + "\" has been backed up at \"" + time);
 
@@ -156,6 +161,12 @@ public class BackupController {
 			backupsInProgress -= 1;
 		} else if (backup.getStatus().equals("DONE")) {
 			backupsDone -= 1;
+			
+			String checkExtension = backup.getFolderName();
+			String theExtension = checkExtension.substring(checkExtension.lastIndexOf(".") + 1, checkExtension.length());
+			if (theExtension.equals("pdf") || theExtension.equals("txt") || theExtension.equals("java") || theExtension.equals("py") || theExtension.equals("docx")) {
+				doneBackupList.remove(id);
+			}
 		}
 
 		this.backupRepository.delete(backup);
@@ -229,7 +240,7 @@ public class BackupController {
 	}
 
 	public StringBuilder printHTML(String extension, File file, String path) throws IOException {
-		if (extension.equals("txt")) {
+		if (extension.equals("txt") || extension.equals("java") || extension.equals("py")) {
 			Scanner myReader = new Scanner(file);
 			StringBuilder text = new StringBuilder();
 			while (myReader.hasNextLine()) {
