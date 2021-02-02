@@ -261,6 +261,7 @@ public class BackupController {
 				text.append(scan.nextLine() + " <br>");
 			}
 			scan.close();
+			pdDocument.close();
 
 			return text;
 		} 
