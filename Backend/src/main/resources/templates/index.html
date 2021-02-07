@@ -85,7 +85,7 @@
 			
 			<div class="container2" id="Graph">
 				<h1>Graph</h1>
-				<p>The graph gives information about the status of backups. It shows how many backups are in progress or done.</p>
+				<p>The graph gives information about the status of backups. It shows how many backups are in progress or done or failed.</p>
 				<div id="myChart" style="height: 400px"></div>
 			</div>
 			
@@ -175,7 +175,7 @@
 			}
 		
 			var chartDiv = document.getElementById("myChart");
-			if([[${InProgress}]] === null && [[${Done}]] === null || [[${InProgress}]] === 0 && [[${Done}]] === 0) { //or empty or whataver
+			if([[${InProgress}]] === null && [[${Done}]] === null && [[${Failed}]] === null || [[${InProgress}]] === 0 && [[${Done}]] === 0 && [[${Failed}]] === 0) { //or empty or whataver
 				chartDiv.style.display = 'none';
 			} else {
 				chartDiv.style.display = 'block';
@@ -225,7 +225,8 @@
 					type : 'pie',
 					name : 'Ratio',
 					data: [{ name: 'In Progress', y: [[${InProgress}]] },
-	                    { name: 'Done', y: [[${Done}]] }]
+	                    { name: 'Done', y: [[${Done}]] },
+	                    { name: 'Failed', y: [[${Failed}]] }]
 				} ]
 			});
 		</script>

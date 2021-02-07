@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Timer;
@@ -44,6 +45,7 @@ public class BackupController {
 	List<Long> doneBackupList = new ArrayList<Long>();
 	private static int backupsInProgress = 0;
 	private static int backupsDone = 0;
+	private static int backupsFailed = 0;
 
 	// Spans with red & green highlights to put highlighted characters in HTML
 	private static final String DELETION = "<span style=\"background-color: #FB504B\">${text}</span>";
@@ -52,12 +54,40 @@ public class BackupController {
 	private String right = "";
 
 	@GetMapping("/list")
-	public String backups(Model model) {
+	public String backups(Model model) throws ParseException {
 		List<Backup> backups = backupRepository.findAll();
+		
+		backupsInProgress = 0;
+		backupsDone = 0;
+		backupsFailed = 0;
+		doneBackupList.clear();
+		
+		for (int i = 0; i < backups.size(); i++) {
+			// check if a certain date is passed AND backup not taken THEN change status to FAILED	
+			if ((new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(backups.get(i).getTime().toString().replace("T", " ")).before(new Date())) && (backups.get(i).getStatus().equals("IN PROGRESS"))) {
+				backups.get(i).setStatus("FAILED");
+			}
+			
+			String checkExtension = backups.get(i).getFolderName();
+			String theExtension = checkExtension.substring(checkExtension.lastIndexOf(".") + 1, checkExtension.length());
+			if ((backups.get(i).getStatus().equals("DONE")) && (theExtension.equals("pdf") || theExtension.equals("txt") || theExtension.equals("java") || theExtension.equals("py") || theExtension.equals("docx"))) {
+				doneBackupList.add(backups.get(i).getId());
+			}
+			
+			if (backups.get(i).getStatus().equals("DONE")) {
+				backupsDone += 1;
+			} else if (backups.get(i).getStatus().equals("IN PROGRESS")) {
+				backupsInProgress += 1;
+			} else if (backups.get(i).getStatus().equals("FAILED")) {
+				backupsFailed += 1;
+			}
+		}
+		
 		model.addAttribute("backups", backups);
 		model.addAttribute("doneBackupList", doneBackupList);
 		model.addAttribute("InProgress", backupsInProgress);
 		model.addAttribute("Done", backupsDone);
+		model.addAttribute("Failed", backupsFailed);
 		return "index";
 	}
 
@@ -76,7 +106,6 @@ public class BackupController {
 		backup.setFolderName(fileName);
 		backup.setTime(time);
 		backup.setStatus("IN PROGRESS");
-		backupsInProgress += 1;
 
 		backupRepository.save(backup);
 
@@ -128,9 +157,6 @@ public class BackupController {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-
-					backupsInProgress -= 1;
-					backupsDone += 1;
 					
 					String checkExtension = updateBackup.getFolderName();
 					String theExtension = checkExtension.substring(checkExtension.lastIndexOf(".") + 1, checkExtension.length());
@@ -157,23 +183,8 @@ public class BackupController {
 		Backup backup = this.backupRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Invalid backup id : " + id));
 
-		if (backup.getStatus().equals("IN PROGRESS")) {
-			backupsInProgress -= 1;
-		} else if (backup.getStatus().equals("DONE")) {
-			backupsDone -= 1;
-			
-			String checkExtension = backup.getFolderName();
-			String theExtension = checkExtension.substring(checkExtension.lastIndexOf(".") + 1, checkExtension.length());
-			if (theExtension.equals("pdf") || theExtension.equals("txt") || theExtension.equals("java") || theExtension.equals("py") || theExtension.equals("docx")) {
-				doneBackupList.remove(id);
-			}
-		}
-
 		this.backupRepository.delete(backup);
 
-		model.addAttribute("backups", this.backupRepository.findAll());
-		model.addAttribute("InProgress", backupsInProgress);
-		model.addAttribute("Done", backupsDone);
 		return "redirect:/list";
 	}
 
