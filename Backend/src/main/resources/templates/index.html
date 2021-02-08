@@ -11,13 +11,20 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
 
 		<link rel="stylesheet" href="static/styles.css"/>
+		<link href="https://nightly.datatables.net/css/jquery.dataTables.css" rel="stylesheet" type="text/css" />
+		
 		<script src="static/script.js"></script>
 		<script src='https://kit.fontawesome.com/a076d05399.js'></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		
+		<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<script src="https://nightly.datatables.net/js/jquery.dataTables.js"></script>
+		
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		
 		<style> 
-
+			select { text-align-last:center; padding-top: 10px; padding-bottom: 15px; }
 		</style>
 	</head>
 	
@@ -54,13 +61,13 @@
 				</div>
 			</div>
 		</div>
-	
+
 		<div class="middle">	
 			<div class="container2" id="BackupHistory">
 				<h1>Backup History</h1>
 				<p>The table below provides a clear summary record of backups.</p>
-				<div id="myTable" style="overflow-x:auto; padding-bottom: 50px; padding-top: 50px;">
-					<table>
+				<div id="myTable" style="overflow-x:auto; margin: 0 auto; padding-bottom: 50px; padding-top: 50px; width: 70%">
+					<table id="myTableTag" class="display nowrap" width="100%">
 						<thead>
 							<tr>
 								<th>ID</th>
@@ -82,7 +89,7 @@
 					</table>
 				  </div>
 			</div>
-			
+
 			<div class="container2" id="Graph">
 				<h1>Graph</h1>
 				<p>The graph gives information about the status of backups. It shows how many backups are in progress or done or failed.</p>
@@ -110,20 +117,21 @@
 				<p>This feature allows you to see how your newly modified file compares to the one you have already backed up. <br> Supported file types include (.docx , .pdf , .txt , .java , .py)</p>
 				
 				<form action="/compareForm" method="post" id="comparison" enctype="multipart/form-data">
-					<label for="backups">Select a completed backup: </label>
-					<select id="selectBackup" name="selectBackup" required="required">
+					<select id="selectBackup" name="selectBackup" required="required" style="width: 70%;">
+						<option value="" disabled selected>Select a completed backup</option>
 					    <option th:each="doneBackup : ${doneBackupList}" th:value="${doneBackup}" th:text="${doneBackup}">
 					    </option>
-					</select>
+					</select><br>
+					<label id="file-name1"></label>
 				
 					<div>	
-						<label class="container2-button">
-							<i class="fa fa-file"></i> Select a file to compare<input type="file" name="file" id="folderName" accept=".pdf, .docx, .txt, .java, .py" style="display: none;" required="required">
+						<label class="container2-button" style="width: 70%;">
+							<i class="fa fa-file"></i> Select a file to compare<input type="file" name="file" id="folderName2" accept=".pdf, .docx, .txt, .java, .py" style="display: none;" required="required">
 						</label><br>
-						<label id="file-name"></label>
+						<label id="file-name2"></label>
 					</div>
 					
-                    <input type="submit" class="container2-button" value="Compare">
+                    <input type="submit" class="container2-button" value="Compare" style="width: 70%;">
 				</form>
 			</div>
 
@@ -170,8 +178,29 @@
 		
 		<script th:inline="javascript">
 		
-			document.querySelector("#folderName").onchange = function(){
-			  document.querySelector("#file-name").textContent = this.files[0].name;
+			$(document).ready(function(){
+			    $('#myTableTag').dataTable({
+			    	"pageLength": 5,
+			    	language: {
+			            searchPlaceholder: " Search Backups",
+			            search: "",
+			        },
+			        lengthMenu: [5, 10, 20],
+			    });
+			});
+		
+			document.querySelector("#selectBackup").onchange = function(){
+				var selectedId = document.getElementById("selectBackup");
+				var theBackupList = [[${backups}]]
+			    for (i = 0; i < theBackupList.length; i++) {
+			        if(theBackupList[i].id === parseInt(selectedId.value)){
+			        	document.querySelector("#file-name1").textContent = theBackupList[i].folderName;
+			        }
+			    }
+			}
+			
+			document.querySelector("#folderName2").onchange = function(){
+			  document.querySelector("#file-name2").textContent = this.files[0].name;
 			}
 		
 			var chartDiv = document.getElementById("myChart");
