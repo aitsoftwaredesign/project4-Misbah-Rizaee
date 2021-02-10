@@ -26,10 +26,12 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Timer;
@@ -62,10 +64,19 @@ public class BackupController {
 		backupsFailed = 0;
 		doneBackupList.clear();
 		
+		Calendar calendar = Calendar.getInstance();
+//		System.out.println(calendar.getTime());
+		calendar.set(Calendar.SECOND, 0);
+//		System.out.println(calendar.getTime()+"!!!!!!!!");
+		calendar.add(Calendar.SECOND, -1);
+//		System.out.println(calendar.getTime()+"!!!!!!!!");
+		
 		for (int i = 0; i < backups.size(); i++) {
-			// check if a certain date is passed AND backup not taken THEN change status to FAILED	
-			if ((new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(backups.get(i).getTime().toString().replace("T", " ")).before(new Date())) && (backups.get(i).getStatus().equals("IN PROGRESS"))) {
-				backups.get(i).setStatus("FAILED");
+			// check if a certain date is passed AND backup not taken THEN change status to FAILED
+			if ((new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(backups.get(i).getTime().toString().replace("T", " ")).before(calendar.getTime())) && (backups.get(i).getStatus().equals("IN PROGRESS"))) {
+				Backup updateBackup = backupRepository.findById(backups.get(i).getId()).get();
+				updateBackup.setStatus("FAILED");
+				backupRepository.save(updateBackup);
 			}
 			
 			String checkExtension = backups.get(i).getFolderName();
@@ -104,7 +115,11 @@ public class BackupController {
 
 		String fileName = file.getOriginalFilename();
 		backup.setFolderName(fileName);
-		backup.setTime(time);
+		
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDateTime now = LocalDateTime.now();
+		backup.setTime(dtf.format(now)+"T"+time);
+		
 		backup.setStatus("IN PROGRESS");
 
 		backupRepository.save(backup);
