@@ -83,7 +83,7 @@
 								<td th:text="${backup.folderName}"></td>
 								<td th:text="${backup.time}"></td>
 								<td th:text="${backup.status}"></td>
-								<td><a th:href="@{/delete/{id}(id=${backup.id})}"><button class="container2-button"><i style='font-size:24px' class='fas'>&#xf410;</i></button></a></td>
+								<td><a th:href="@{/delete/{id}(id=${backup.id})}"><button class="container2-button"><i style='font-size:24px' class='fa fa-remove'></i></button></a></td>
 							</tr>
 						</tbody>
 					</table>
@@ -99,7 +99,7 @@
 			<div class="container4"  id="AboutApplication">
 				<div class="container4-column" style="background-color: #def2f1;">
 					<div class="container4-column-content" id="left">
-						<i style='font-size:80px' class='fas'>&#xf0a0;</i>
+						<i style='font-size:80px' class='fa fa-question-circle'></i>
 					</div>
 				</div>
 				<div class="container4-column" style="background-color: #def2f1;">
@@ -141,7 +141,7 @@
 					<div class='container3-content'>
 						<div class='container3-card'>
 							<div class='container3-icon'>
-								<i class='fas'>&#xf0a0;</i>
+								<i class='fa fa-paste'></i>
 							</div>
 							<h3>Schedule Backup</h3>
 							<p>Using AutoBackup application, you can take advantage of creating backup copy of your important files, then the backup job should run at the scheduled time and perform a full backup.</p>
