@@ -1,5 +1,5 @@
 # Introduction
-During the Covid-19 pandemic, nearly all people including students rely on computers to study and do their work. It is becoming increasingly difficult to ignore the risk of losing access to the files in our computers due to accidental causes such as file corruption or deletion of data.
+During the Covid-19 pandemic, nearly all people over the world rely on computers to study and do their works. It is becoming increasingly difficult to ignore the risk of losing access to the files in our computers due to accidental causes such as file corruption or deletion of data.
 
 # Project Name
 AutoBackup
@@ -17,6 +17,6 @@ During my time at Ericsson company, I learned much about Cloud Native Technologi
 JavaScript, HTML and CSS are the technologies I needed to create the UI for my project from Scratch. Working with different technologies and putting them together resulted in a responsive multipages web app.
 
 ## Database
-The data for my project is stored in amazon RDS database. The main reason I decided to switch from local MySQL container to amazin RDS is that there is no chance of data loss.
+The data for my project is stored in amazon RDS database. The main reason I decided to switch from local MySQL container to amazin RDS is that there is no chance of data loss using amazon RDS.
 
 ![Image of Architecture](/Images/Architecture.png)
