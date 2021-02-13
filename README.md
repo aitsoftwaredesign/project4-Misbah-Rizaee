@@ -17,6 +17,6 @@ During my time at Ericsson company, I learned much about Cloud Native Technologi
 JavaScript, HTML and CSS are the technologies I needed to create the UI for my project from Scratch. Working with different technologies and putting them together resulted in a responsive multipages web app.
 
 ## Database
-The data for my project is stored in amazon RDS database. The main reason I decided to switch from local MySQL container to amazin RDS is that there is no chance of data loss using amazon RDS.
+The data for my project is stored in amazon RDS database. The main reason I decided to switch from local MySQL container to amazon RDS is that there is no chance of data loss using amazon RDS.
 
 ![Image of Architecture](/Images/Architecture.png)

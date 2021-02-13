@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -237,6 +238,8 @@ public class BackupController {
 			String filename1 = backedUp.getFolderName();
 			String extension1 = filename1.substring(filename1.lastIndexOf(".") + 1, filename1.length());
 			StringBuilder leftTextBeforeHighlight = printHTML(extension1, file1, path1);
+			String lines1[] = leftTextBeforeHighlight.toString().split("\\r?\\n");
+
 			String leftHeading = "Backed up file: " + filename1;
 			model.addAttribute("leftHeading", leftHeading);
 
@@ -249,16 +252,18 @@ public class BackupController {
 			String filename2 = file.getOriginalFilename();
 			String extension2 = filename2.substring(filename2.lastIndexOf(".") + 1, filename2.length());
 			StringBuilder rightTextBeforeHighlight = printHTML(extension2, convFile, path1);
+			String lines2[] = rightTextBeforeHighlight.toString().split("\\r?\\n");
+
 			String rightHeading = "Modified file: " + filename2;
 			model.addAttribute("rightHeading", rightHeading);
 
 			left = "";
 			right = "";
-			String leftTextAfterHighlight = deleteHighlight(leftTextBeforeHighlight, rightTextBeforeHighlight);
-			String rightTextAfterHighlight = insertHighlight(rightTextBeforeHighlight, leftTextBeforeHighlight);
+			String leftTextAfterHighlight = deleteHighlight(lines1, lines2);
+			String rightTextAfterHighlight = insertHighlight(lines2, lines1);
 			model.addAttribute("leftText", leftTextAfterHighlight);
 			model.addAttribute("rightText", rightTextAfterHighlight);
-
+			
 			convFile.delete();
 			return "compareFiles";
 		}
@@ -270,7 +275,7 @@ public class BackupController {
 			Scanner myReader = new Scanner(file);
 			StringBuilder text = new StringBuilder();
 			while (myReader.hasNextLine()) {
-				text.append(myReader.nextLine() + " <br>");
+				text.append(myReader.nextLine() + " \n");
 			}
 			myReader.close();
 
@@ -284,7 +289,7 @@ public class BackupController {
 			StringBuilder text = new StringBuilder();
 			Scanner scan = new Scanner(leftText);
 			while (scan.hasNextLine()) {
-				text.append(scan.nextLine() + " <br>");
+				text.append(scan.nextLine() + " \n");
 			}
 			scan.close();
 			pdDocument.close();
@@ -298,7 +303,7 @@ public class BackupController {
 
 			StringBuilder text = new StringBuilder();
 			for (XWPFParagraph paragraph : paragraphList) {
-				text.append(paragraph.getText() + " <br>");
+				text.append(paragraph.getText() + " \n");
 			}
 
 			return text;
@@ -306,51 +311,81 @@ public class BackupController {
 		return null;
 	}
 
-	public String deleteHighlight(StringBuilder leftTextBeforeHighlight, StringBuilder rightTextBeforeHighlight) {
+	public String deleteHighlight(String[] lines1, String[] lines2) {
 
-		String s1 = leftTextBeforeHighlight.toString();
-		String s2 = rightTextBeforeHighlight.toString();
+		int maxLs =  Math.max(lines1.length, lines2.length);
+		for (int i = 0; i < maxLs; i++) { 
 
-		String s1_words[] = s1.split("\\s");
-		String s2_words[] = s2.split("\\s");
-
-		int num_words = s1_words.length;
-
-		for (int i = 0; i < num_words; i++) {
-			if (i > s2_words.length - 1) {
-				left = left + DELETION.replace("${text}", "" + s1_words[i]) + " ";
-			} else {
-				if (s1_words[i].equalsIgnoreCase(s2_words[i])) {
-					left = left + s1_words[i] + " ";
-				} else if (s1_words[i] != s2_words[i]) {
-					left = left + DELETION.replace("${text}", "" + s1_words[i]) + " ";
+			if (i > lines2.length - 1) {
+				String lineWords1[] = lines1[i].split("\\s");
+				for (int z = 0; z < lineWords1.length; z++) {
+					left = left + DELETION.replace("${text}", "" + lineWords1[z]) + " ";
+				}
+			} else if (i > lines1.length - 1) {
+				System.out.println("End of file 1");
+				break;
+			}
+			else {
+				String lineWords1[] = lines1[i].split("\\s");
+				String lineWords2[] = lines2[i].split("\\s");
+				
+				int maxWs =  Math.max(lineWords1.length, lineWords2.length);
+				for (int y = 0; y < maxWs; y++) {
+					if (y > lineWords2.length - 1) {
+						left = left + DELETION.replace("${text}", "" + lineWords1[y]) + " ";
+					} else if (y > lineWords1.length - 1) {
+						break;
+					}
+					else {
+						if (lineWords1[y].equalsIgnoreCase(lineWords2[y])) {
+							left = left + lineWords1[y] + " ";
+						} else if (lineWords1[y] != lineWords2[y]) {
+							left = left + DELETION.replace("${text}", "" + lineWords1[y]) + " ";
+						}
+					}
 				}
 			}
-		}
+			left = left + " <br>";
+        } 
 		return left;
 	}
 
-	public String insertHighlight(StringBuilder rightTextBeforeHighlight, StringBuilder leftTextBeforeHighlight) {
+	public String insertHighlight(String[] lines1, String[] lines2) {
 
-		String s1 = rightTextBeforeHighlight.toString();
-		String s2 = leftTextBeforeHighlight.toString();
+		int maxLs =  Math.max(lines1.length, lines2.length);
+		for (int i = 0; i < maxLs; i++) { 
 
-		String s1_words[] = s1.split("\\s");
-		String s2_words[] = s2.split("\\s");
-
-		int num_words = s1_words.length;
-
-		for (int i = 0; i < num_words; i++) {
-			if (i > s2_words.length - 1) {
-				right = right + INSERTION.replace("${text}", "" + s1_words[i]) + " ";
-			} else {
-				if (s1_words[i].equalsIgnoreCase(s2_words[i])) {
-					right = right + s1_words[i] + " ";
-				} else if (s1_words[i] != s2_words[i]) {
-					right = right + INSERTION.replace("${text}", "" + s1_words[i]) + " ";
+			if (i > lines2.length - 1) {
+				String lineWords1[] = lines1[i].split("\\s");
+				for (int z = 0; z < lineWords1.length; z++) {
+					right = right + INSERTION.replace("${text}", "" + lineWords1[z]) + " ";
+				}
+			} else if (i > lines1.length - 1) {
+				System.out.println("End of file 1");
+				break;
+			}
+			else {
+				String lineWords1[] = lines1[i].split("\\s");
+				String lineWords2[] = lines2[i].split("\\s");
+				
+				int maxWs =  Math.max(lineWords1.length, lineWords2.length);
+				for (int y = 0; y < maxWs; y++) {
+					if (y > lineWords2.length - 1) {
+						right = right + INSERTION.replace("${text}", "" + lineWords1[y]) + " ";
+					} else if (y > lineWords1.length - 1) {
+						break;
+					}
+					else {
+						if (lineWords1[y].equalsIgnoreCase(lineWords2[y])) {
+							right = right + lineWords1[y] + " ";
+						} else if (lineWords1[y] != lineWords2[y]) {
+							right = right + INSERTION.replace("${text}", "" + lineWords1[y]) + " ";
+						}
+					}
 				}
 			}
-		}
+			right = right + " <br>";
+        } 
 		return right;
 	}
 }
