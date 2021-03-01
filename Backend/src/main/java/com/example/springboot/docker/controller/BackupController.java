@@ -11,16 +11,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.pdfbox.pdmodel.*;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 import com.example.springboot.docker.model.Backup;
 import com.example.springboot.docker.repository.BackupRepository;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -37,6 +40,9 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 @Controller
 public class BackupController {
@@ -109,8 +115,10 @@ public class BackupController {
 	}
 
 	@PostMapping("/add")
-	public String addBackup(@RequestParam("file") MultipartFile file, @RequestParam("time") String time)
+	public String addBackup(@RequestParam("file") MultipartFile file, @RequestParam("time") String time, @RequestParam("compress") String compress)
 			throws ParseException {
+		
+		System.out.println(compress);
 
 		Backup backup = new Backup();
 
@@ -122,15 +130,21 @@ public class BackupController {
 		backup.setTime(dtf.format(now)+"T"+time);
 		
 		backup.setStatus("IN PROGRESS");
+		
+		if (compress.equals("yes")) {
+			backup.setCompression("Compressed");
+		} else if (compress.equals("no")) {
+			backup.setCompression("Not Compressed");
+		}
 
 		backupRepository.save(backup);
 
-		runScheduledBackup(backup.getTime(), backup.getFolderName(), backup.getId(), file);
+		runScheduledBackup(backup.getTime(), backup.getId(), file, compress);
 
 		return "redirect:list";
 	}
 
-	public void runScheduledBackup(String time, String folderName, long id, MultipartFile file) throws ParseException {
+	public void runScheduledBackup(String time, long id, MultipartFile file, String compress) throws ParseException {
 
 		// the Date and time at which I want to execute
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -164,26 +178,62 @@ public class BackupController {
 					} else {
 						System.out.println("A directory for backups already exists at (" + path + ")");
 					}
-
-					String fileName = file.getOriginalFilename();
-					try {
-						file.transferTo(new File(path + File.separator + fileName));
-					} catch (IllegalStateException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
 					
-					String checkExtension = updateBackup.getFolderName();
-					String theExtension = checkExtension.substring(checkExtension.lastIndexOf(".") + 1, checkExtension.length());
-					if (theExtension.equals("pdf") || theExtension.equals("txt") || theExtension.equals("java") || theExtension.equals("py") || theExtension.equals("docx")) {
-						doneBackupList.add(id);
-					}
+					if (compress.equals("yes")) {
+			            try {
+			            	 // input file 
+			            	InputStream inputStream =  new BufferedInputStream(file.getInputStream());
 
-					System.out.println("The file \"" + fileName + "\" has been backed up at \"" + time);
+			                // out put file 
+			                String fileNameWithOutExt = FilenameUtils.removeExtension(file.getOriginalFilename());
+			                ZipOutputStream out = new ZipOutputStream(new FileOutputStream(path + File.separator + fileNameWithOutExt+".zip"));
+
+			                // name the file inside the zip  file 
+			                out.putNextEntry(new ZipEntry(file.getOriginalFilename())); 
+
+			                // buffer size
+			                byte[] b = new byte[1024];
+			                int count;
+
+			                while ((count = inputStream.read(b)) > 0) {
+			                    out.write(b, 0, count);
+			                }
+			                out.close();
+			                inputStream.close();
+			                
+							String checkExtension = updateBackup.getFolderName();
+							String theExtension = checkExtension.substring(checkExtension.lastIndexOf(".") + 1, checkExtension.length());
+							if (theExtension.equals("pdf") || theExtension.equals("txt") || theExtension.equals("java") || theExtension.equals("py") || theExtension.equals("docx")) {
+								doneBackupList.add(id);
+							}
+		
+							System.out.println("The file \"" + folderName + "\" has been backed up at \"" + time);
+				            
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					} else if (compress.equals("no")) {
+
+						String fileName = file.getOriginalFilename();
+						try {
+							file.transferTo(new File(path + File.separator + fileName));
+						} catch (IllegalStateException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						
+						String checkExtension = updateBackup.getFolderName();
+						String theExtension = checkExtension.substring(checkExtension.lastIndexOf(".") + 1, checkExtension.length());
+						if (theExtension.equals("pdf") || theExtension.equals("txt") || theExtension.equals("java") || theExtension.equals("py") || theExtension.equals("docx")) {
+							doneBackupList.add(id);
+						}
+	
+						System.out.println("The file \"" + fileName + "\" has been backed up at \"" + time);
+					}
 
 				} catch (NoSuchElementException e) {
-					System.out.println("Scheduled backup with ID " + id + " was deleted. File (" + folderName
+					System.out.println("Scheduled backup with ID " + id + " was deleted. File (" + file.getOriginalFilename()
 							+ ") has not been backed up.");
 				}
 			}

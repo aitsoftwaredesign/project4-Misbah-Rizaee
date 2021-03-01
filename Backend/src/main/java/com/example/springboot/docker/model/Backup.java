@@ -13,15 +13,17 @@ public class Backup {
 	private String folderName;
 	private String time;
 	private String status;
+	private String compression;
 
 	public Backup() {
 
 	}
 
-	public Backup(String folderName, String time, String status) {
+	public Backup(String folderName, String time, String status, String compression) {
 		this.folderName = folderName;
 		this.time = time;
 		this.status = status;
+		this.compression = compression;
 	}
 
 	public String getTime() {
@@ -54,5 +56,13 @@ public class Backup {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getCompression() {
+		return compression;
+	}
+
+	public void setCompression(String compression) {
+		this.compression = compression;
 	}
 }

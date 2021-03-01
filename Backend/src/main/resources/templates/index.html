@@ -73,6 +73,7 @@
 								<th>ID</th>
 								<th>Folder Name</th>
 								<th>Time</th>
+								<th>Compression</th>
 								<th>Status</th>
 								<th>Delete</th>
 							</tr>
@@ -82,6 +83,7 @@
 								<td th:text="${backup.id}"></td>
 								<td th:text="${backup.folderName}"></td>
 								<td th:text="${backup.time}"></td>
+								<td th:text="${backup.compression}"></td>
 								<td th:text="${backup.status}"></td>
 								<td><a th:href="@{/delete/{id}(id=${backup.id})}"><button class="container2-button"><i style='font-size:24px' class='fa fa-remove'></i></button></a></td>
 							</tr>
