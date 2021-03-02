@@ -19,11 +19,12 @@ JavaScript, HTML and CSS are the technologies I needed to create the UI for my p
 ## Database
 The data for my project is stored in amazon RDS database. The main reason I decided to switch from local MySQL container to amazon RDS is that there is no chance of data loss using amazon RDS.
 
-![Image of Architecture](/Images/Architecture.png)
+![Image of Architecture](/Images/Architecture1.jpg)
+![Image of Architecture](/Images/Architecture2.jpg)
 
 # AutoBackup User Interface - Screenshots
 ## Main WebPage
 ![Image of Architecture](/Images/MainPage.png)
 
 ## Compare WebPage
-![Image of Architecture](/Images/ComparePage.png)
+![Image of Architecture](/Images/ComparePage2.jpg)
