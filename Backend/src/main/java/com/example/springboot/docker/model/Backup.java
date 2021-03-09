@@ -19,7 +19,8 @@ public class Backup {
 
 	}
 
-	public Backup(String folderName, String time, String status, String compression) {
+	public Backup(long id, String folderName, String time, String status, String compression) {
+		this.id = id;
 		this.folderName = folderName;
 		this.time = time;
 		this.status = status;
